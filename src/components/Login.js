@@ -1,6 +1,8 @@
 import React, {useState} from "react";
+import {connect} from "react-redux";
+import * as actions from '../store/actions/index'
 
-function Login() {
+function Login(props) {
     // initial state
     const initial = {
         username: '',
@@ -23,11 +25,14 @@ function Login() {
         event.preventDefault();
         console.log(login);
         setLogin({username: '', password: ''});
+        // localStorage.setItem("Please", "Please save this I dont know anymore");
+        props.login(login.username, login.password);
     }
 
     return (
         <div>
             Login
+            <div>Status: {props.logged ? 'Logged In' : 'Logged Out'}</div>
             <form onSubmit={handleSubmit}>
                 <label>
                     Username:
@@ -44,4 +49,19 @@ function Login() {
     );
 }
 
-export default Login;
+// connect props to redux store state
+const mapStateToProps = state => {
+    return {
+        logged: state.auth.token !== null
+    };
+};
+// connect props to redux dispatches
+const mapDispatchToProps = dispatch => {
+    return {
+        login:(username, password) => dispatch(actions.auth(username,password))
+    };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
+// export default Login;
